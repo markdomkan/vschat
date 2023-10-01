@@ -1,0 +1,53 @@
+{
+  "name": "vschat",
+  "displayName": "vschat",
+  "private": true,
+  "version": "0.0.0",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "slack-chat",
+          "title": "Slack chat",
+          "icon": "resources/package-explorer.svg"
+        }
+      ]
+    },
+    "views": {
+      "slack-chat": [
+        {
+          "type": "webview",
+          "id": "slack-chat.webview",
+          "name": "Slack"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "dev": "concurrently \"bun dev:view\" \"bun dev:main\"",
+    "dev:view": "bunx --bun vite build --watch",
+    "dev:main": "bun -b esbuild src/main/extension.ts --bundle --watch --outfile=out/extension.js --format=cjs --minify --platform=node --external:vscode",
+    "build:view": "bunx --bun vite build",
+    "build:main": "bun -b esbuild src/main/extension.ts --bundle --outfile=out/extension.js --format=cjs --minify --platform=node --external:vscode"
+  },
+  "dependencies": {
+    "solid-js": "^1.7.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20.8.0",
+    "@types/vscode": "^1.82.0",
+    "concurrently": "^8.2.1",
+    "esbuild": "^0.19.4",
+    "typescript": "^5.0.2",
+    "vite": "^4.4.5",
+    "vite-plugin-solid": "^2.7.0"
+  }
+}

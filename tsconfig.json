@@ -13,7 +13,6 @@
     // "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": false,
     "jsx": "preserve",
     "jsxImportSource": "solid-js",
     /* Linting */
@@ -23,6 +22,12 @@
     "noFallthroughCasesInSwitch": true,
     "composite": true,
     "allowSyntheticDefaultImports": true,
-    "outDir": "out"
-  }
+    "outDir": "out",
+    "baseUrl": ".",
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.tsx"
+  ],
 }

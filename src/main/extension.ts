@@ -1,98 +1,19 @@
-import {
-  // CancellationToken,
-  ExtensionContext,
-  SnippetString,
-  Uri,
-  Webview,
-  WebviewView,
-  WebviewViewProvider,
-  // WebviewViewResolveContext,
-  window,
-} from "vscode";
+import { ExtensionContext, window } from "vscode";
 
-import { readFileSync, readdirSync } from "fs";
-import { extname, join } from "path";
+import { VsChatViewProvider } from "./ViewProvider/VsChatViewProvider";
+import { SlackApp } from "./SlackApp";
+
 export function activate(context: ExtensionContext) {
+  const slackApp = new SlackApp(
+    "xapp-1-A05UZ17CD5L-5977192786503-ef003eeebe4f399d50d601b2f5912edd44f5d95a21933f6fe5f3093b1a1b512d"
+  );
+
   context.subscriptions.push(
     window.registerWebviewViewProvider(
       "slack-chat.webview",
-      new ChatViewProvider(context.extensionUri)
+      new VsChatViewProvider(context.extensionUri, slackApp)
     )
   );
-}
 
-class ChatViewProvider implements WebviewViewProvider {
-  // private view?: WebviewView;
-
-  constructor(private readonly extensionUri: Uri) {}
-
-  public resolveWebviewView(
-    webviewView: WebviewView
-    // context: WebviewViewResolveContext,
-    // token: CancellationToken
-  ) {
-    // this.view = webviewView;
-    webviewView.webview.options = {
-      enableScripts: true,
-      localResourceRoots: [Uri.joinPath(this.extensionUri, "out", "assets")],
-    };
-
-    webviewView.webview.html = this.getHtmlForWebview(webviewView.webview);
-
-    webviewView.webview.onDidReceiveMessage((data) => {
-      switch (data.type) {
-        case "colorSelected": {
-          window.activeTextEditor?.insertSnippet(
-            new SnippetString(`#${data.value}`)
-          );
-          break;
-        }
-      }
-    });
-  }
-
-  private getHtmlForWebview(webview: Webview) {
-    const files = readdirSync(
-      Uri.joinPath(this.extensionUri, "out", "view", "assets").path
-    );
-
-    let scripts = "";
-    let styles = "";
-
-    for (const file of files) {
-      const fileType = extname( file);
-      if (fileType === ".js") {
-        scripts = scripts.concat(
-          `<script>
-          ${readFileSync(
-            join(this.extensionUri.path, "out", "view", "assets", file)
-          )}
-          </script>`
-        );
-      } else if (fileType === ".css") {
-        styles = styles.concat(
-          `<style>
-          ${readFileSync(
-            join(this.extensionUri.path, "out", "view", "assets", file)
-          )}
-          </style>`
-        );
-      }
-    }
-
-    return `<!doctype html>
-    <html lang="en"> 
-      <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        ${styles}   
-        <title>Vite + Solid + TS</title>
-      </head>
-      <body>
-        <div id="root"></div>
-      </body>
-      ${scripts}
-    </html>
-    `;
-  }
+  setTimeout(console.clear, 2000);
 }

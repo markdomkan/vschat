@@ -1,25 +1,29 @@
+import { Channel } from "@slack/web-api/dist/response/ConversationsListResponse";
 import { createSignal } from "solid-js";
-import "./App.css";
+import { useApi } from "./hooks/useApi";
 
 function App() {
-  const [count, setCount] = createSignal(0);
+  const { postMessage } = useApi();
+  const [channels, setChannels] = createSignal<Channel[]>([]);
+
+  async function sendToVsCode() {
+    const channels = await postMessage("GET_CHANNEL_LIST", undefined);
+    setChannels(channels);
+  }
 
   return (
     <>
-      <h1>Vite + Solid</h1>
-      <div class="card"> 
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count()}
-        </button> 
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div> 
-      <p class="read-the-docs">
-        Click on the Vite and Solid logos to learn more
-      </p>
+      <button class="button" onClick={sendToVsCode}>
+        Send to VS Code
+      </button>
+
+      <ul>
+        {channels().map((channel) => (
+          <li>{channel.name}</li>
+        ))}
+      </ul>
     </>
   );
-} 
+}
 
 export default App;
